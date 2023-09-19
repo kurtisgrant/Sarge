@@ -1,8 +1,8 @@
 import { Message } from "~/types";
 
-export default function Messages({ messages }: { messages: Message[] }) {
+export default function Messages({ messages, deleteMessage }: { messages: Message[], deleteMessage: (index: number) => void }) {
     return (
-        <div className="flex flex-col p-2 h-80 overflow-auto">
+        <div className="flex flex-col p-2 h-[50vh] overflow-auto">
             {messages.map((message, index) => (
                 <div
                     key={index}
@@ -13,6 +13,7 @@ export default function Messages({ messages }: { messages: Message[] }) {
                             <p className={`${message.type === 'assistant' ? 'self-start' : 'self-end'}`}>
                                 {message.content}
                             </p>
+                            <button onClick={() => deleteMessage(index)} className="self-end opacity-20 hover:opacity-60">x</button>
                         </div>
                         <p className={`italic px-2 ${message.type === 'assistant' ? 'text-left' : 'text-right'}`}>
                             {message.sender} {message.timestamp.toLocaleString()}
