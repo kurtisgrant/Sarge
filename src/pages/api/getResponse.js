@@ -11,14 +11,15 @@ async function getCompletion(string) {
     const completion = await openai.completions.create({
         prompt: string,
         model: "gpt-3.5-turbo-instruct",
-        max_tokens: 40
+        max_tokens: 200,
+        stop: "\n\n"
     });
     console.log(completion);
     return completion
 }
 
 function promptFromMessages(messages) {
-    let prompt = "";
+    let prompt = "[You are an accountability coach. Expect your client to check-in with you regularily throughout the day to update you on their progress. Before sending your client off, ensure a check-in time is set for the coming 10-30 minutes. If the user does not check-in before their scheduled time, give them a hard time and make them think you are upset with them.]\n---\n";
     for (let message of messages) {
         const ts = new Date(message.timestamp)
         prompt += `\n\n${message.type} - ${ts.toLocaleString()}: ${message.content}`;
