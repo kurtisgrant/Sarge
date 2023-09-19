@@ -11,12 +11,20 @@ export default function ComposeMsgArea({ sendMessage }: { sendMessage: (message:
         }
     };
 
+    const handleKeyDown = (event: React.KeyboardEvent) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            handleSendMessage(event as any);
+        }
+    };
+
     return (
         <form onSubmit={handleSendMessage} className="flex gap-4 bg-purple-900 p-2 justify-center rounded-b-xl">
             <textarea
                 className="rounded-md p-1 w-full bg-grey-300"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
+                onKeyDown={handleKeyDown}
             />
             <button
                 type="submit"
