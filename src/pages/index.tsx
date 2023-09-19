@@ -11,12 +11,14 @@ export default function Home() {
     {
       sender: 'John',
       content: 'I am looking for a routine that can help me build muscle mass. I have been working out for a while but not seeing significant results. Can you suggest a routine that can help me achieve my goals? I am open to trying different types of workouts.',
-      type: 'user'
+      type: 'user',
+      timestamp: new Date()
     },
     {
       sender: 'ai',
       content: 'Absolutely, John. I would recommend incorporating compound exercises into your routine. These exercises target multiple muscle groups at once and can help you build muscle mass. You could try exercises like squats, deadlifts, and bench presses. Remember, consistency is key in seeing results.',
-      type: 'ai'
+      type: 'ai',
+      timestamp: new Date()
     },
   ]);
 
@@ -26,7 +28,8 @@ export default function Home() {
       {
         sender: sessionData?.user?.name || 'User',
         content: message,
-        type: 'user'
+        type: 'user',
+        timestamp: new Date()
       }
     ]);
   };

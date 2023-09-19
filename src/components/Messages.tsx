@@ -15,7 +15,7 @@ export default function Messages({ messages }: { messages: Message[] }) {
                             </p>
                         </div>
                         <p className={`italic px-2 ${message.type === 'ai' ? 'text-left' : 'text-right'}`}>
-                            {message.sender}
+                            {message.sender} {message.timestamp.toLocaleString()}
                         </p>
                     </div>
                 </div>
