@@ -40,9 +40,6 @@ export default async function handler(req, res) {
     console.log('request received on back end')
     if (req.method === 'POST') {
         const messages = req.body;
-        console.log('MESSAGESSSSSSSSS', messages)
-
-        // const messages = JSON.parse(jsonMessages)
 
         // Call your getResponse function here
         const response = await getResponse(messages);

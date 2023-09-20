@@ -1,26 +1,28 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Head from "next/head";
 import { Message } from "~/types"
 import Messages from "~/components/Messages"
 import ComposeMsgArea from "~/components/ComposeMsgArea";
+import { api } from "~/utils/api";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function Home() {
   const { data: sessionData } = useSession();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { data: messages, refetch } = api.endpoints.getMessages.useQuery();
+
+  const addMessageMutation = api.endpoints.addMessage.useMutation();
+
+  const deleteMessageMutation = api.endpoints.deleteMessage.useMutation();
 
   const submitUserMessage = async (message: string) => {
     const newMessage: Message = {
       sender: sessionData?.user?.name || 'User',
       content: message,
-      type: 'user',
-      timestamp: new Date()
+      type: 'user'
     };
-
-    setMessages(prevMessages => [
-      ...prevMessages,
-      newMessage
-    ]);
+    await addMessageMutation.mutateAsync(newMessage);
+    refetch();
 
     // Send the user message to the server and get the response
     const response = await fetch('/api/getResponse', {
@@ -28,25 +30,22 @@ export default function Home() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify([...messages, newMessage])
+      body: JSON.stringify([...(messages || []), newMessage])
     });
 
     const reply = await response.json();
-    console.log('reply: ', reply)
 
-    setMessages(prevMessages => [
-      ...prevMessages,
-      {
-        sender: 'Sarge',
-        content: reply.response,
-        type: 'assistant',
-        timestamp: new Date()
-      }
-    ]);
+    const newResponse: Message = {
+      sender: 'Sarge',
+      content: reply.response,
+      type: 'assistant'
+    }
+    await addMessageMutation.mutateAsync(newResponse);
+    refetch();
   };
 
-  const deleteMessage = (index: number) => {
-    setMessages(prevMessages => prevMessages.filter((_, i) => i !== index));
+  const deleteMessage = (index: string) => {
+    deleteMessageMutation.mutateAsync({ index }).then(() => refetch());
   };
 
   return (
@@ -64,7 +63,7 @@ export default function Home() {
           <div className="flex flex-col items-center gap-2 w-full">
             <div className="flex flex-col items-center justify-center gap-4 w-full">
               <div className="w-full h-1/2 bg-gray-100 rounded-xl">
-                <Messages messages={messages} deleteMessage={deleteMessage} />
+                <Messages messages={messages as Message[]} deleteMessage={deleteMessage} />
                 <ComposeMsgArea sendMessage={submitUserMessage} />
               </div>
 
